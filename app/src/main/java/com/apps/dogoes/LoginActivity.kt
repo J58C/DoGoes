@@ -1,5 +1,6 @@
 package com.apps.dogoes
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -42,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
 
                     if (user != null) {
                         if (user.role == "admin") {
+                            saveUserData(user)
                             Toast.makeText(this@LoginActivity, "Login berhasil!", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                             finish()
@@ -61,5 +63,18 @@ class LoginActivity : AppCompatActivity() {
                 Log.e("LoginActivity", "Error: ${t.message}")
             }
         })
+    }
+
+    private fun saveUserData(user: UserResponse) {
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString("user_id", user._id)
+        editor.putString("user_name", user.name)
+        editor.putString("user_email", user.email)
+        editor.putString("user_role", user.role)
+        editor.putString("user_geotag", user.geotag)
+
+        editor.apply()
     }
 }
