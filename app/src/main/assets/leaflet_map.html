@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        #map { height: 300px; width: 100%; display: none; }
+        #map { height: 280px; width: 280px; display: none; }
     </style>
 </head>
 <body>
@@ -22,7 +22,6 @@
         map.setView([lat, lon], 15);
         if (marker) { map.removeLayer(marker); }
         marker = L.marker([lat, lon]).addTo(map)
-            .bindPopup("Your Location").openPopup();
         document.getElementById('map').style.display = 'block'; // Show map
     }
 </script>

@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.apps.testapp.api.ApiClient
-import com.apps.testapp.api.UserResponse
+import com.apps.dogoes.api.ApiClient
+import com.apps.dogoes.api.UserResponse
 import com.apps.dogoes.databinding.ActivityLoginBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email dan password wajib diisi!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Email and Password are Required!", Toast.LENGTH_SHORT).show()
             } else {
                 loginUser(email, password)
             }
@@ -44,22 +44,22 @@ class LoginActivity : AppCompatActivity() {
                     if (user != null) {
                         if (user.role == "admin") {
                             saveUserData(user)
-                            Toast.makeText(this@LoginActivity, "Login berhasil!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@LoginActivity, "Login Successful!", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                             finish()
                         } else {
-                            Toast.makeText(this@LoginActivity, "Hanya admin yang dapat login!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@LoginActivity, "Only Admins can Login!", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(this@LoginActivity, "Email atau password salah!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, "Wrong Email or Password!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@LoginActivity, "Gagal mengambil data!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Failed to Fetch data!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<UserResponse>>, t: Throwable) {
-                Toast.makeText(this@LoginActivity, "Terjadi kesalahan: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 Log.e("LoginActivity", "Error: ${t.message}")
             }
         })
@@ -71,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
 
         editor.putString("user_id", user._id)
         editor.putString("user_name", user.name)
+        editor.putBoolean("user_status", user.status)
         editor.putString("user_email", user.email)
         editor.putString("user_role", user.role)
         editor.putString("user_geotag", user.geotag)

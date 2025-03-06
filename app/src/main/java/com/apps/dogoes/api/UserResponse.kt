@@ -1,4 +1,4 @@
-package com.apps.testapp.api
+package com.apps.dogoes.api
 
 data class UserResponse(
     val _id: String,
