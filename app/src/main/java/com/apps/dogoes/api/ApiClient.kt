@@ -4,12 +4,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
 object ApiClient {
-    private const val BASE_URL = "https://tesbackv1.vercel.app/api/"
+    private const val BASE_URL = "http://10.10.118.67:3000/api/"
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
@@ -22,12 +22,19 @@ object ApiClient {
 }
 
 interface ApiService {
-    @GET("products")
-    fun getUsers(): Call<List<UserResponse>>
+    @POST("login")
+    fun loginUser(
+        @Body request: LoginRequest
+    ): Call<UserResponse>
 
-    @PUT("products/{id}")
+    @PUT("clients/{id}")
     fun updateUserStatus(
         @Path("id") userId: String,
         @Body request: UpdateStatusRequest
     ): Call<UserResponse>
 }
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)

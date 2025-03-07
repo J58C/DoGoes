@@ -1,6 +1,7 @@
 package com.apps.dogoes.api
 
 data class UpdateStatusRequest(
-    val status: Boolean,
-    val geotag: String
+    val status: Int,
+    val geotag: String,
+    val note: String
 )
