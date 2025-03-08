@@ -1,8 +1,12 @@
 package com.apps.dogoes.api
 
-import com.google.gson.JsonObject
-
 data class UserResponse(
-    val msg: String,
-    val user: JsonObject
+    val _id: String,
+    val status: Int,
+    val geotag: String,
+    val name: String,
+    val email: String,
+    val role: String,
+    val token: String,
+    val notes: String
 )
