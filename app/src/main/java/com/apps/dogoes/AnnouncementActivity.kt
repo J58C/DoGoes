@@ -50,15 +50,12 @@ class AnnouncementActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Toast.makeText(this@AnnouncementActivity, "Upload Successful!", Toast.LENGTH_SHORT).show()
 
-                    // Clear text fields
                     etTitle.text.clear()
                     etContent.text.clear()
 
-                    // Clear focus
                     etTitle.clearFocus()
                     etContent.clearFocus()
 
-                    // Close keyboard
                     hideKeyboard()
                 } else {
                     Log.e("UploadError", "Failed: ${response.errorBody()?.string()}")
