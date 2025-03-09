@@ -33,8 +33,3 @@ interface ApiService {
         @Body request: UpdateStatusRequest
     ): Call<UserResponse>
 }
-
-data class LoginRequest(
-    val email: String,
-    val password: String
-)
