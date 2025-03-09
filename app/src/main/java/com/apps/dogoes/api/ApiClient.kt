@@ -32,4 +32,9 @@ interface ApiService {
         @Path("id") userId: String,
         @Body request: UpdateStatusRequest
     ): Call<UserResponse>
+
+    @POST("announcements")
+    fun uploadAnnouncement(
+        @Body announcement: AnnouncementRequest
+    ): Call<AnnouncementResponse>
 }
