@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.apps.dogoes.api.ApiClient
@@ -16,6 +17,7 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private var isForgotPasswordMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +25,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (isUserLoggedIn()) {
-            Log.d("LoginActivity", "User already logged in, redirecting to MainActivity")
             startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
@@ -33,12 +34,52 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email and Password are Required!", Toast.LENGTH_SHORT).show()
+            if (isForgotPasswordMode) {
+                forgotPassword(email)
             } else {
-                loginUser(email, password)
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(this, "Email and Password are Required!", Toast.LENGTH_SHORT).show()
+                } else {
+                    loginUser(email, password)
+                }
             }
         }
+
+        binding.tvForgotPassword.setOnClickListener {
+            switchToForgotPasswordMode()
+        }
+    }
+
+    private fun switchToForgotPasswordMode() {
+        isForgotPasswordMode = true
+        binding.etPassword.visibility = View.GONE
+        binding.tvForgotPassword.visibility = View.GONE
+        binding.btnLogin.text = "Reset"
+        binding.txtLogin.text = "Forgot"
+    }
+
+    private fun forgotPassword(email: String) {
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Email is required!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val apiService = ApiClient.instance
+        val requestBody = mapOf("email" to email)
+
+        apiService.forgotPassword(requestBody).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@LoginActivity, "New Password Sent!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@LoginActivity, "Failed to Send Email!", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@LoginActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun loginUser(email: String, password: String) {

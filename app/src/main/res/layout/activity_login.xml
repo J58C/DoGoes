@@ -19,7 +19,8 @@
             android:fontFamily="sans-serif-black"
             android:paddingBottom="20dp"
             android:text="Login"
-            android:textSize="48sp" />
+            android:textSize="48sp"
+            android:layout_gravity="center"/>
 
         <EditText
             android:id="@+id/etEmail"
@@ -43,6 +44,20 @@
             android:layout_height="48dp"
             android:text="Login"
             android:layout_marginTop="32dp"/>
+
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:textColor="@color/teal_700"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_gravity="center"/>
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
