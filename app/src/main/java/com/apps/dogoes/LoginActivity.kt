@@ -64,6 +64,14 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val userRole = sharedPreferences.getString("user_role", "")
+
+        if (userRole != "user") {
+            Toast.makeText(this, "Only users can reset password!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val apiService = ApiClient.instance
         val requestBody = mapOf("email" to email)
 
@@ -90,7 +98,6 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful) {
                     val user = response.body()
-                    Toast.makeText(this@LoginActivity, user?.toString(), Toast.LENGTH_SHORT).show()
                       if (user?.role != null && user.role == "user") {
                         saveUserData(user)
                         Log.d("LoginActivity", "Login successful, user_id: ${user._id}")
