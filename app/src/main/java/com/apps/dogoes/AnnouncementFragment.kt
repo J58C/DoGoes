@@ -3,10 +3,13 @@ package com.apps.dogoes
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.apps.dogoes.api.ApiClient
 import com.apps.dogoes.api.AnnouncementRequest
@@ -15,7 +18,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AnnouncementActivity : AppCompatActivity() {
+class AnnouncementsFragment : Fragment() {
 
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
@@ -25,17 +28,21 @@ class AnnouncementActivity : AppCompatActivity() {
     private var lastTitle: String? = null
     private var lastContent: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_announcement)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_announcements, container, false)
 
-        etTitle = findViewById(R.id.etTitle)
-        etContent = findViewById(R.id.etContent)
-        btnUpload = findViewById(R.id.btnUpload)
+        etTitle = view.findViewById(R.id.etTitle)
+        etContent = view.findViewById(R.id.etContent)
+        btnUpload = view.findViewById(R.id.btnUpload)
 
         btnUpload.setOnClickListener {
             uploadAnnouncement()
         }
+
+        return view
     }
 
     private fun uploadAnnouncement() {
@@ -43,7 +50,7 @@ class AnnouncementActivity : AppCompatActivity() {
         val content = etContent.text.toString().trim()
 
         if (title.isEmpty() || content.isEmpty()) {
-            Snackbar.make(btnUpload, "Title and Content cannot be empty", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(requireView(), "Title and Content cannot be empty", Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -54,17 +61,20 @@ class AnnouncementActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val uploadedData = response.body()
                     if (uploadedData != null) {
+                        // Simpan ID dari respons untuk undo
                         lastId = uploadedData._id
                         lastTitle = uploadedData.title
                         lastContent = uploadedData.content
 
+                        // Bersihkan input dan sembunyikan keyboard
                         etTitle.text.clear()
                         etContent.text.clear()
                         etTitle.clearFocus()
                         etContent.clearFocus()
                         hideKeyboard()
 
-                        Snackbar.make(btnUpload, "Upload Successful!", Snackbar.LENGTH_LONG)
+                        // Tampilkan Snackbar dengan tombol UNDO
+                        Snackbar.make(requireView(), "Upload Successful!", Snackbar.LENGTH_LONG)
                             .setAction("UNDO") {
                                 undoUpload()
                             }
@@ -72,13 +82,13 @@ class AnnouncementActivity : AppCompatActivity() {
                     }
                 } else {
                     Log.e("UploadError", "Failed: ${response.errorBody()?.string()}")
-                    Snackbar.make(btnUpload, "Failed to Upload", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(requireView(), "Failed to Upload", Snackbar.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<AnnouncementResponse>, t: Throwable) {
                 Log.e("UploadError", "Network Error: ${t.message}")
-                Snackbar.make(btnUpload, "Network Error: ${t.message}", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(requireView(), "Network Error: ${t.message}", Snackbar.LENGTH_LONG).show()
             }
         })
     }
@@ -88,27 +98,29 @@ class AnnouncementActivity : AppCompatActivity() {
             ApiClient.instance.deleteAnnouncement(lastId!!).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
+                        // Kembalikan data ke input field
                         etTitle.setText(lastTitle)
                         etContent.setText(lastContent)
 
-                        Snackbar.make(btnUpload, "Upload Undone!", Snackbar.LENGTH_SHORT).show()
+                        // Tampilkan Snackbar untuk konfirmasi undo berhasil
+                        Snackbar.make(requireView(), "Upload Undone!", Snackbar.LENGTH_SHORT).show()
                     } else {
-                        Snackbar.make(btnUpload, "Failed to Undo", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(requireView(), "Failed to Undo", Snackbar.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Snackbar.make(btnUpload, "Network Error: ${t.message}", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(requireView(), "Network Error: ${t.message}", Snackbar.LENGTH_LONG).show()
                 }
             })
         } else {
-            Snackbar.make(btnUpload, "No recent upload to undo", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(requireView(), "No recent upload to undo", Snackbar.LENGTH_SHORT).show()
         }
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        currentFocus?.let {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        view?.let {
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
