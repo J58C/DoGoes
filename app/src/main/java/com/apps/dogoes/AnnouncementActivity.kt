@@ -6,8 +6,8 @@ import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.apps.dogoes.api.ApiClient
 import com.apps.dogoes.api.AnnouncementRequest
 import com.apps.dogoes.api.AnnouncementResponse
@@ -20,6 +20,10 @@ class AnnouncementActivity : AppCompatActivity() {
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
     private lateinit var btnUpload: Button
+
+    private var lastId: String? = null
+    private var lastTitle: String? = null
+    private var lastContent: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +43,7 @@ class AnnouncementActivity : AppCompatActivity() {
         val content = etContent.text.toString().trim()
 
         if (title.isEmpty() || content.isEmpty()) {
-            Toast.makeText(this, "Title and Content cannot be empty", Toast.LENGTH_SHORT).show()
+            Snackbar.make(btnUpload, "Title and Content cannot be empty", Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -48,30 +52,64 @@ class AnnouncementActivity : AppCompatActivity() {
         ApiClient.instance.uploadAnnouncement(request).enqueue(object : Callback<AnnouncementResponse> {
             override fun onResponse(call: Call<AnnouncementResponse>, response: Response<AnnouncementResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AnnouncementActivity, "Upload Successful!", Toast.LENGTH_SHORT).show()
+                    val uploadedData = response.body()
+                    if (uploadedData != null) {
+                        lastId = uploadedData._id
+                        lastTitle = uploadedData.title
+                        lastContent = uploadedData.content
 
-                    etTitle.text.clear()
-                    etContent.text.clear()
+                        etTitle.text.clear()
+                        etContent.text.clear()
+                        etTitle.clearFocus()
+                        etContent.clearFocus()
+                        hideKeyboard()
 
-                    etTitle.clearFocus()
-                    etContent.clearFocus()
-
-                    hideKeyboard()
+                        Snackbar.make(btnUpload, "Upload Successful!", Snackbar.LENGTH_LONG)
+                            .setAction("UNDO") {
+                                undoUpload()
+                            }
+                            .show()
+                    }
                 } else {
                     Log.e("UploadError", "Failed: ${response.errorBody()?.string()}")
-                    Toast.makeText(this@AnnouncementActivity, "Failed to Upload", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(btnUpload, "Failed to Upload", Snackbar.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<AnnouncementResponse>, t: Throwable) {
                 Log.e("UploadError", "Network Error: ${t.message}")
-                Toast.makeText(this@AnnouncementActivity, "Network Error: ${t.message}", Toast.LENGTH_LONG).show()
+                Snackbar.make(btnUpload, "Network Error: ${t.message}", Snackbar.LENGTH_LONG).show()
             }
         })
     }
 
+    private fun undoUpload() {
+        if (lastId != null) {
+            ApiClient.instance.deleteAnnouncement(lastId!!).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        etTitle.setText(lastTitle)
+                        etContent.setText(lastContent)
+
+                        Snackbar.make(btnUpload, "Upload Undone!", Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        Snackbar.make(btnUpload, "Failed to Undo", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Snackbar.make(btnUpload, "Network Error: ${t.message}", Snackbar.LENGTH_LONG).show()
+                }
+            })
+        } else {
+            Snackbar.make(btnUpload, "No recent upload to undo", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        currentFocus?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 }

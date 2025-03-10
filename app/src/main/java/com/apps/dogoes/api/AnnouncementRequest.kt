@@ -6,6 +6,7 @@ data class AnnouncementRequest(
 )
 
 data class AnnouncementResponse(
+    val _id: String,
     val title: String,
     val content: String
 )
