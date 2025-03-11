@@ -10,7 +10,7 @@ import retrofit2.http.Path
 import retrofit2.http.DELETE
 
 object ApiClient {
-    private const val BASE_URL = "https://sigmaskibidi.my.id/api/"
+    private const val BASE_URL = "http://10.10.118.153:3000/api/"
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
@@ -34,9 +34,15 @@ interface ApiService {
         @Body request: UpdateStatusRequest
     ): Call<UserResponse>
 
-    @POST("clients/forgotpw")
-    fun forgotPassword(
-        @Body request: Map<String, String>
+    @PUT("api/clients/setpassword/{iduser}")
+    fun changePassword(
+        @Path("iduser") userId: String,
+        @Body request: ChangePasswordRequest
+    ): Call<Void>
+
+    @POST("password/mailpw")
+    fun sendResetPasswordEmail(
+        @Body request: ResetPasswordRequest
     ): Call<Void>
 
     @POST("announcements")

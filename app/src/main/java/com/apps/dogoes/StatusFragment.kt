@@ -26,7 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainFragment : Fragment() {
+class StatusFragment : Fragment() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var webView: WebView
@@ -34,17 +34,15 @@ class MainFragment : Fragment() {
     private lateinit var btnSend: Button
     private lateinit var etNote: EditText
     private lateinit var autoCompleteTextView: AutoCompleteTextView
-    private lateinit var tvUserName: TextView
     private var lastLatitude: Double? = null
     private var lastLongitude: Double? = null
-    private var lastLocation: String? = null
     private var isSlidDown = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_status, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,7 +63,6 @@ class MainFragment : Fragment() {
         btnLocation = view.findViewById(R.id.btnLocation)
         btnSend = view.findViewById(R.id.btnSend)
         etNote = view.findViewById(R.id.etNote)
-        tvUserName = view.findViewById(R.id.tvUserName)
         autoCompleteTextView = view.findViewById(R.id.tvavailable)
 
         webView.settings.javaScriptEnabled = true
@@ -79,18 +76,8 @@ class MainFragment : Fragment() {
         autoCompleteTextView.setOnClickListener { autoCompleteTextView.showDropDown() }
         autoCompleteTextView.keyListener = null
 
-        val userName = sharedPreferences.getString("user_name", "Guest")
         val userStatus = sharedPreferences.getInt("user_status", 0)
         autoCompleteTextView.setText(if (userStatus == 1) "Available" else "Unavailable", false)
-        tvUserName.text = userName
-
-        val btnLogout = view.findViewById<Button>(R.id.btnLogout)
-        btnLogout.setOnClickListener {
-            sharedPreferences.edit().clear().apply()
-            Toast.makeText(requireContext(), "Logged out!", Toast.LENGTH_SHORT).show()
-            requireActivity().startActivity(Intent(requireActivity(), LoginActivity::class.java))
-            requireActivity().finish()
-        }
 
         btnLocation.setOnClickListener { getLocation() }
         btnSend.setOnClickListener { sendUserStatusUpdate() }

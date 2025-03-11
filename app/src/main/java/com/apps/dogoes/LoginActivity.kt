@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.apps.dogoes.api.ApiClient
 import com.apps.dogoes.api.LoginRequest
 import com.apps.dogoes.api.UserResponse
+import com.apps.dogoes.api.ResetPasswordRequest
 import com.apps.dogoes.databinding.ActivityLoginBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -64,23 +65,14 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val userRole = sharedPreferences.getString("user_role", "")
+        val requestBody = ResetPasswordRequest(email)
 
-        if (userRole != "user") {
-            Toast.makeText(this, "Only users can reset password!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val apiService = ApiClient.instance
-        val requestBody = mapOf("email" to email)
-
-        apiService.forgotPassword(requestBody).enqueue(object : Callback<Void> {
+        ApiClient.instance.sendResetPasswordEmail(requestBody).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@LoginActivity, "New Password Sent!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Password reset email sent!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@LoginActivity, "Failed to Send Email!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Failed to send password reset email!", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -98,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful) {
                     val user = response.body()
-                      if (user?.role != null && user.role == "user") {
+                    if (user?.role != null && user.role == "user") {
                         saveUserData(user)
                         Log.d("LoginActivity", "Login successful, user_id: ${user._id}")
 

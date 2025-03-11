@@ -61,19 +61,16 @@ class AnnouncementsFragment : Fragment() {
                 if (response.isSuccessful) {
                     val uploadedData = response.body()
                     if (uploadedData != null) {
-                        // Simpan ID dari respons untuk undo
                         lastId = uploadedData._id
                         lastTitle = uploadedData.title
                         lastContent = uploadedData.content
 
-                        // Bersihkan input dan sembunyikan keyboard
                         etTitle.text.clear()
                         etContent.text.clear()
                         etTitle.clearFocus()
                         etContent.clearFocus()
                         hideKeyboard()
 
-                        // Tampilkan Snackbar dengan tombol UNDO
                         Snackbar.make(requireView(), "Upload Successful!", Snackbar.LENGTH_LONG)
                             .setAction("UNDO") {
                                 undoUpload()
