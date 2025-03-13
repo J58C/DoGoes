@@ -15,12 +15,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DoGoes"
+        android:theme="@style/Theme.Dogoes"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <meta-data
             android:name="androidx.appcompat.app.AppCompatDelegate.DEFAULT_NIGHT_MODE"
             android:value="1"/>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <!-- Activity Login -->
         <activity
