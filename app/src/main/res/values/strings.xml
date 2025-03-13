@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">DoGoes</string>
-    <string name="textview">TextView</string>
+    <string name="sign_in">Sign In</string>
+    <string name="reset">Reset</string>
+    <string name="login">Login</string>
+    <string name="pass">Password</string>
+    <string name="mail">Email</string>
+    <string name="description_f">Enter your email to receive a password reset link.</string>
+    <string name="description_i">Enter your credentials to access your account.</string>
+    <string name="forgot">Forgot Password?</string>
 </resources>

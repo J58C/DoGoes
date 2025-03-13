@@ -1,12 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.Dogoes" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.Dogoes" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Warna utama -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="colorOnBackground">@color/colorText</item>
-        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorError">@color/colorError</item>
-        <item name="android:statusBarColor">@color/colorPrimary</item>
+
+        <!-- Warna aksen (Tidak digunakan di MaterialComponents, bisa dihapus jika tidak perlu) -->
+        <item name="colorTertiary">@color/colorAccent</item>
+
+        <!-- Status Bar dan Navigation Bar -->
+        <item name="android:statusBarColor">@color/colorBackground</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
+
+        <!-- Tambahan kompatibilitas -->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

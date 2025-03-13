@@ -1,12 +1,15 @@
 package com.apps.dogoes
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import android.animation.ObjectAnimator
+import android.animation.AnimatorSet
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
 import com.apps.dogoes.api.ApiClient
 import com.apps.dogoes.api.LoginRequest
 import com.apps.dogoes.api.UserResponse
@@ -15,6 +18,8 @@ import com.apps.dogoes.databinding.ActivityLoginBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.text.Editable
+import android.text.TextWatcher
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -31,6 +36,16 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isForgotPasswordMode) {
+                    switchToLoginMode()
+                } else {
+                    finish()
+                }
+            }
+        })
+
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
@@ -39,28 +54,174 @@ class LoginActivity : AppCompatActivity() {
                 forgotPassword(email)
             } else {
                 if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(this, "Email and Password are Required!", Toast.LENGTH_SHORT).show()
-                } else {
+                    if (email.isEmpty() && password.isEmpty()) {
+                        showErrorAnimation(binding.etEmail)
+                        showErrorAnimation(binding.etPassword)
+                        Toast.makeText(this, "Email & Password required!", Toast.LENGTH_SHORT).show()
+                    } else if (email.isEmpty()) {
+                        showErrorAnimation(binding.etEmail)
+                        Toast.makeText(this, "Email required!", Toast.LENGTH_SHORT).show()
+                    } else if (password.isEmpty()) {
+                        showErrorAnimation(binding.etPassword)
+                        Toast.makeText(this, "Password required!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else {
                     loginUser(email, password)
                 }
             }
         }
 
-        binding.tvForgotPassword.setOnClickListener {
+        binding.txtForgotPassword.setOnClickListener {
             switchToForgotPasswordMode()
         }
+
+        binding.txtLogin.setOnClickListener {
+            if (isForgotPasswordMode) switchToLoginMode()
+        }
+
+        addTextWatchers()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isForgotPasswordMode) {
+                    switchToLoginMode()
+                } else {
+                    finish()
+                }
+            }
+        })
+    }
+
+    private fun showErrorAnimation(view: View) {
+        val animator = ObjectAnimator.ofFloat(view, "translationX", 0f, 10f, -10f, 10f, -10f, 0f)
+        animator.duration = 500
+        animator.start()
+
+        view.setBackgroundResource(R.drawable.editxt_error)
+    }
+
+    private fun addTextWatchers() {
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                binding.etEmail.setBackgroundResource(R.drawable.editxt_normal)
+            }
+        })
+
+        binding.etPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                binding.etPassword.setBackgroundResource(R.drawable.editxt_normal)
+            }
+        })
     }
 
     private fun switchToForgotPasswordMode() {
         isForgotPasswordMode = true
-        binding.etPassword.visibility = View.GONE
-        binding.tvForgotPassword.visibility = View.GONE
-        binding.btnLogin.text = "Reset"
-        binding.txtLogin.text = "Forgot"
+
+        val fadeOutPassword = ObjectAnimator.ofFloat(binding.etPassword, "alpha", 1f, 0f)
+        val fadeOutForgotPassword = ObjectAnimator.ofFloat(binding.txtForgotPassword, "alpha", 1f, 0f)
+        val fadeOutSignIn = ObjectAnimator.ofFloat(binding.txtLogin, "alpha", 1f, 0f)
+        val fadeOutDescription = ObjectAnimator.ofFloat(binding.txtDescription, "alpha", 1f, 0f)
+
+        fadeOutPassword.duration = 300
+        fadeOutForgotPassword.duration = 300
+        fadeOutSignIn.duration = 300
+        fadeOutDescription.duration = 300
+
+        val fadeOutSet = AnimatorSet()
+        fadeOutSet.playTogether(fadeOutPassword, fadeOutForgotPassword, fadeOutSignIn, fadeOutDescription)
+        fadeOutSet.start()
+
+        fadeOutSet.doOnEnd {
+            binding.etPassword.visibility = View.INVISIBLE
+            binding.txtForgotPassword.visibility = View.INVISIBLE
+
+            binding.btnLogin.text = getString(R.string.reset)
+            binding.txtLogin.text = getString(R.string.forgot)
+            binding.txtDescription.text = getString(R.string.description_f)
+
+            binding.txtLogin.visibility = View.VISIBLE
+            binding.txtDescription.visibility = View.VISIBLE
+            binding.btnLogin.visibility = View.VISIBLE
+
+            binding.txtLogin.alpha = 0f
+            binding.txtDescription.alpha = 0f
+            binding.btnLogin.alpha = 0f
+
+            val fadeInLoginText = ObjectAnimator.ofFloat(binding.txtLogin, "alpha", 0f, 1f)
+            val fadeInDescription = ObjectAnimator.ofFloat(binding.txtDescription, "alpha", 0f, 1f)
+            val fadeInButton = ObjectAnimator.ofFloat(binding.btnLogin, "alpha", 0f, 1f)
+
+            fadeInLoginText.duration = 500
+            fadeInDescription.duration = 500
+            fadeInButton.duration = 500
+
+            AnimatorSet().apply {
+                playTogether(fadeInLoginText, fadeInDescription, fadeInButton)
+                start()
+            }
+        }
+    }
+
+    private fun switchToLoginMode() {
+        isForgotPasswordMode = false
+
+        val fadeOutDescription = ObjectAnimator.ofFloat(binding.txtDescription, "alpha", 1f, 0f)
+        val fadeOutLoginText = ObjectAnimator.ofFloat(binding.txtLogin, "alpha", 1f, 0f)
+        val fadeOutButton = ObjectAnimator.ofFloat(binding.btnLogin, "alpha", 1f, 0f)
+
+        fadeOutDescription.duration = 300
+        fadeOutLoginText.duration = 300
+        fadeOutButton.duration = 300
+
+        val fadeOutSet = AnimatorSet()
+        fadeOutSet.playTogether(fadeOutDescription, fadeOutLoginText, fadeOutButton)
+        fadeOutSet.start()
+
+        fadeOutSet.doOnEnd {
+            binding.txtDescription.visibility = View.INVISIBLE
+            binding.txtLogin.visibility = View.INVISIBLE
+
+            binding.etPassword.visibility = View.VISIBLE
+            binding.txtForgotPassword.visibility = View.VISIBLE
+            binding.btnLogin.text = getString(R.string.login)
+            binding.txtLogin.text = getString(R.string.sign_in)
+            binding.txtDescription.text = getString(R.string.description_i)
+
+            binding.txtLogin.visibility = View.VISIBLE
+            binding.txtDescription.visibility = View.VISIBLE
+            binding.btnLogin.visibility = View.VISIBLE
+
+            binding.txtLogin.alpha = 0f
+            binding.txtDescription.alpha = 0f
+            binding.btnLogin.alpha = 0f
+
+            val fadeInPassword = ObjectAnimator.ofFloat(binding.etPassword, "alpha", 0f, 1f)
+            val fadeInForgotPassword = ObjectAnimator.ofFloat(binding.txtForgotPassword, "alpha", 0f, 1f)
+            val fadeInLoginText = ObjectAnimator.ofFloat(binding.txtLogin, "alpha", 0f, 1f)
+            val fadeInDescription = ObjectAnimator.ofFloat(binding.txtDescription, "alpha", 0f, 1f)
+            val fadeInButton = ObjectAnimator.ofFloat(binding.btnLogin, "alpha", 0f, 1f)
+
+            fadeInPassword.duration = 500
+            fadeInForgotPassword.duration = 500
+            fadeInLoginText.duration = 500
+            fadeInDescription.duration = 500
+            fadeInButton.duration = 500
+
+            AnimatorSet().apply {
+                playTogether(fadeInPassword, fadeInForgotPassword, fadeInLoginText, fadeInDescription, fadeInButton)
+                start()
+            }
+        }
     }
 
     private fun forgotPassword(email: String) {
         if (email.isEmpty()) {
+            showErrorAnimation(binding.etEmail)
             Toast.makeText(this, "Email is required!", Toast.LENGTH_SHORT).show()
             return
         }
@@ -70,9 +231,9 @@ class LoginActivity : AppCompatActivity() {
         ApiClient.instance.sendResetPasswordEmail(requestBody).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@LoginActivity, "Password reset email sent!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Reset email sent!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@LoginActivity, "Failed to send password reset email!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Failed to send reset!", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -98,10 +259,10 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this@LoginActivity, "Only User can Login!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, "User access only!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@LoginActivity, "Wrong Email or Password!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Invalid email or password!", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -109,11 +270,10 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-
     }
 
     private fun saveUserData(user: UserResponse) {
-        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         editor.putString("user_id", user._id)
@@ -132,7 +292,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun isUserLoggedIn(): Boolean {
-        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         return sharedPreferences.getString("user_id", null) != null
     }
 }
