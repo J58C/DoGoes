@@ -8,4 +8,13 @@
     <string name="description_f">Enter your email to receive a password reset link.</string>
     <string name="description_i">Enter your credentials to access your account.</string>
     <string name="forgot">Forgot Password?</string>
+    <string name="unnes">Logo Unnes</string>
+    <string name="hello">Good day,</string>
+    <string name="user">User</string>
+    <string name="announcement">Announcement</string>
+    <string name="status">Status</string>
+    <string name="profile">Profile</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
+    <string name="send">Send</string>
 </resources>

@@ -22,7 +22,7 @@ class AnnouncementsFragment : Fragment() {
 
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
-    private lateinit var btnUpload: Button
+    private lateinit var btnSend: Button
 
     private var lastId: String? = null
     private var lastTitle: String? = null
@@ -36,9 +36,9 @@ class AnnouncementsFragment : Fragment() {
 
         etTitle = view.findViewById(R.id.etTitle)
         etContent = view.findViewById(R.id.etContent)
-        btnUpload = view.findViewById(R.id.btnUpload)
+        btnSend = view.findViewById(R.id.btnSend)
 
-        btnUpload.setOnClickListener {
+        btnSend.setOnClickListener {
             uploadAnnouncement()
         }
 
