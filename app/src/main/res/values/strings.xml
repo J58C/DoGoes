@@ -17,4 +17,9 @@
     <string name="title">Title</string>
     <string name="content">Content</string>
     <string name="send">Send</string>
+    <string name="submit">Submit</string>
+    <string name="change">Change</string>
+    <string name="oldpw">Old Password</string>
+    <string name="newpw">New Password</string>
+    <string name="logout">Logout</string>
 </resources>

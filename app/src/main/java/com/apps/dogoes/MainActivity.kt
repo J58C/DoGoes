@@ -52,6 +52,32 @@ class MainActivity : AppCompatActivity() {
                 val itemId = bottomNavigationView.menu[position].itemId
                 animateNavItem(itemId)
                 bottomNavigationView.menu[position].isChecked = true
+
+                val logoUnnes = findViewById<View>(R.id.logoUnnes)
+                val txtHello = findViewById<View>(R.id.txtHello)
+
+                if (position == 2) {
+                    logoUnnes.animate()?.alpha(0f)?.setDuration(300)?.withEndAction {
+                        logoUnnes.visibility = View.INVISIBLE
+                    }?.start()
+
+                    txtHello.animate()?.alpha(0f)?.setDuration(300)?.withEndAction {
+                        txtHello.visibility = View.INVISIBLE
+                    }?.start()
+
+                    tvUserName.animate()?.alpha(0f)?.setDuration(300)?.withEndAction {
+                        tvUserName.visibility = View.INVISIBLE
+                    }?.start()
+
+                } else {
+                    logoUnnes.visibility = View.VISIBLE
+                    txtHello.visibility = View.VISIBLE
+                    tvUserName.visibility = View.VISIBLE
+
+                    logoUnnes.animate()?.alpha(1f)?.setDuration(300)?.start()
+                    txtHello.animate()?.alpha(1f)?.setDuration(300)?.start()
+                    tvUserName.animate()?.alpha(1f)?.setDuration(300)?.start()
+                }
             }
         })
 

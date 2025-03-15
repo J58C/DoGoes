@@ -1,53 +1,129 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/etOldPassword"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Old Password"
-        android:inputType="textPassword"
-        android:visibility="gone"/>
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/etNewPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="New Password"
-        android:inputType="textPassword"
-        android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="#665683FF">
 
-    <Button
-        android:id="@+id/btnSubmitPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:visibility="gone"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:gravity="start"
+                android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:visibility="gone"/>
+                <ImageView
+                    android:id="@+id/logoUnnes"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:contentDescription="@string/unnes"
+                    android:src="@drawable/unnes_logo" />
 
-    <Button
-        android:id="@+id/btnChangePassword"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="Change Password"
-        app:cornerRadius="5dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        app:cornerRadius="5dp"/>
-</LinearLayout>
+                    <TextView
+                        android:id="@+id/txtHello"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorText"
+                        android:text="@string/hello"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/intertight_medium"
+                        android:layout_marginStart="16dp"/>
+
+                    <TextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorText"
+                        android:text="@string/user"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/roboto_bold"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="9dp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/etOldPassword"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:autofillHints="password"
+                android:background="@drawable/editxt_normal"
+                android:fontFamily="@font/intertight_medium"
+                android:hint="@string/oldpw"
+                android:inputType="textPassword"
+                android:padding="12dp"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/etNewPassword"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:autofillHints="password"
+                android:background="@drawable/editxt_normal"
+                android:fontFamily="@font/intertight_medium"
+                android:hint="@string/newpw"
+                android:inputType="textPassword"
+                android:padding="12dp"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnChangePassword"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/colorAccent"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="@string/change"
+                android:textColor="@color/colorBackground"
+                app:cornerRadius="10dp" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/colorError"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="@string/logout"
+                android:textColor="@color/colorBackground"
+                app:cornerRadius="10dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

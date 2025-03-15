@@ -95,11 +95,9 @@ class AnnouncementsFragment : Fragment() {
             ApiClient.instance.deleteAnnouncement(lastId!!).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
-                        // Kembalikan data ke input field
                         etTitle.setText(lastTitle)
                         etContent.setText(lastContent)
 
-                        // Tampilkan Snackbar untuk konfirmasi undo berhasil
                         Snackbar.make(requireView(), "Upload Undone!", Snackbar.LENGTH_SHORT).show()
                     } else {
                         Snackbar.make(requireView(), "Failed to Undo", Snackbar.LENGTH_SHORT).show()
