@@ -114,6 +114,7 @@ class ProfileFragment : Fragment() {
                     btnCancel.performClick()
                 } else {
                     Toast.makeText(requireContext(), "Gagal mengubah password!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), userId, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {

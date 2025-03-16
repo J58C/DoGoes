@@ -10,7 +10,7 @@ import retrofit2.http.Path
 import retrofit2.http.DELETE
 
 object ApiClient {
-    private const val BASE_URL = "http://10.10.118.153:3000/api/"
+    private const val BASE_URL = "https://sigmaskibidi.my.id/api/"
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
