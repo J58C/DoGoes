@@ -1,5 +1,6 @@
 package com.apps.dogoes
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,8 @@ import com.apps.dogoes.api.AnnouncementResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.text.Editable
+import android.text.TextWatcher
 
 class AnnouncementsFragment : Fragment() {
 
@@ -42,12 +45,22 @@ class AnnouncementsFragment : Fragment() {
             uploadAnnouncement()
         }
 
+        addTextWatchers()
+
         return view
     }
 
     private fun uploadAnnouncement() {
         val title = etTitle.text.toString().trim()
         val content = etContent.text.toString().trim()
+
+        if (title.isEmpty()) {
+            showErrorAnimation(etTitle)
+        }
+
+        if (content.isEmpty()) {
+            showErrorAnimation(etContent)
+        }
 
         if (title.isEmpty() || content.isEmpty()) {
             Snackbar.make(requireView(), "Title and Content cannot be empty", Snackbar.LENGTH_SHORT).show()
@@ -118,5 +131,31 @@ class AnnouncementsFragment : Fragment() {
         view?.let {
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
+    }
+
+    private fun showErrorAnimation(view: View) {
+        val animator = ObjectAnimator.ofFloat(view, "translationX", 0f, 10f, -10f, 10f, -10f, 0f)
+        animator.duration = 500
+        animator.start()
+
+        view.setBackgroundResource(R.drawable.editxt_error)
+    }
+
+    private fun addTextWatchers() {
+        etTitle.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                etTitle.setBackgroundResource(R.drawable.editxt_normal)
+            }
+        })
+
+        etContent.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                etContent.setBackgroundResource(R.drawable.editxt_normal)
+            }
+        })
     }
 }

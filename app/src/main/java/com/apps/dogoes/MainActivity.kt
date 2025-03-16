@@ -1,5 +1,6 @@
 package com.apps.dogoes
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -7,6 +8,8 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.forEach
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,6 +25,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setContentView(R.layout.activity_main)
+
+        val window = window
+        val colorSecondary = ContextCompat.getColor(this, R.color.colorSecondary)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
+            window.navigationBarColor = colorSecondary
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = true
+        } else {
+            @Suppress("DEPRECATION")
+            window.navigationBarColor = colorSecondary
+        }
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         viewPager = findViewById(R.id.viewPager)

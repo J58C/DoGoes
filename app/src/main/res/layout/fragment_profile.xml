@@ -22,7 +22,7 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="24dp"
-            android:background="#665683FF">
+            android:background="#7494EC">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -99,11 +99,12 @@
                 android:textSize="16sp"
                 android:visibility="gone" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnChangePassword"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_rec30a"
                 android:backgroundTint="@color/colorAccent"
                 android:gravity="center"
                 android:padding="12dp"
@@ -111,11 +112,12 @@
                 android:textColor="@color/colorBackground"
                 app:cornerRadius="10dp" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLogout"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_rec30a"
                 android:backgroundTint="@color/colorError"
                 android:gravity="center"
                 android:padding="12dp"
