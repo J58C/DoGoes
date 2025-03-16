@@ -1,7 +1,9 @@
+@file:Suppress("PropertyName")
+
 package com.apps.dogoes.api
 
 data class UserResponse(
-    val user_id: String,
+    val _id: String,
     val status: Int,
     val geotag: String,
     val name: String,
@@ -25,7 +27,7 @@ data class AnnouncementRequest(
 
 data class AnnouncementResponse(
     val user_id: String,
-    val ann: String,
+    val announcement_id: String,
     val title: String,
     val content: String
 )

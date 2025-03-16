@@ -9,7 +9,7 @@
 
         <item name="colorTertiary">@color/colorAccent</item>
 
-        <item name="android:statusBarColor">@color/colorBackground</item>
+        <item name="android:statusBarColor">@color/colorText</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
 
         <item name="android:windowLightStatusBar">true</item>

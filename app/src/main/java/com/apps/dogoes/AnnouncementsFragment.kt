@@ -80,7 +80,7 @@ class AnnouncementsFragment : Fragment() {
                 if (response.isSuccessful) {
                     val uploadedData = response.body()
                     if (uploadedData != null) {
-                        lastId = uploadedData.ann
+                        lastId = uploadedData.announcement_id
                         lastTitle = uploadedData.title
                         lastContent = uploadedData.content
 

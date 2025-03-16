@@ -38,13 +38,14 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="12dp"
                     android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
                     android:text="@string/announcement"
                     android:textColor="@color/colorBackground"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:gravity="center_vertical"
-                    android:includeFontPadding="false"
-                    app:drawableStartCompat="@drawable/ic_announcement" />
+                    app:drawableStartCompat="@drawable/ic_announcement"
+                    tools:ignore="TextContrastCheck" />
             </LinearLayout>
 
             <EditText

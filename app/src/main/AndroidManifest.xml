@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.apps.dogoes">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -18,9 +19,13 @@
         android:theme="@style/Theme.Dogoes"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <!-- Force Light Mode -->
         <meta-data
             android:name="androidx.appcompat.app.AppCompatDelegate.DEFAULT_NIGHT_MODE"
-            android:value="1"/>
+            android:value="1" />
+
+        <!-- Preloaded Fonts -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
