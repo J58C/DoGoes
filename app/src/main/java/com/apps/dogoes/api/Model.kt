@@ -1,7 +1,7 @@
 package com.apps.dogoes.api
 
 data class UserResponse(
-    val _id: String,
+    val user_id: String,
     val status: Int,
     val geotag: String,
     val name: String,
@@ -18,13 +18,13 @@ data class UpdateStatusRequest(
 )
 
 data class AnnouncementRequest(
-    val _id: String?,
+    val user_id: String,
     val title: String,
     val content: String
 )
 
 data class AnnouncementResponse(
-    val _id: String,
+    val user_id: String,
     val ann: String,
     val title: String,
     val content: String

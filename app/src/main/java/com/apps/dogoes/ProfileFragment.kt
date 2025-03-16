@@ -113,6 +113,7 @@ class ProfileFragment : Fragment() {
                     resetChangePasswordUI()
                 } else {
                     Toast.makeText(requireContext(), "Failed to change password!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), userId, Toast.LENGTH_SHORT).show()
                 }
             }
 

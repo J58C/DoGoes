@@ -21,6 +21,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 
 class AnnouncementsFragment : Fragment() {
 
@@ -54,6 +55,7 @@ class AnnouncementsFragment : Fragment() {
     private fun uploadAnnouncement() {
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
+        Toast.makeText(requireContext(), userId, Toast.LENGTH_SHORT).show()
 
         val title = etTitle.text.toString().trim()
         val content = etContent.text.toString().trim()
@@ -71,7 +73,7 @@ class AnnouncementsFragment : Fragment() {
             return
         }
 
-        val request = AnnouncementRequest(userId, title, content)
+        val request = AnnouncementRequest(userId.toString(), title, content)
 
         ApiClient.instance.uploadAnnouncement(request).enqueue(object : Callback<AnnouncementResponse> {
             override fun onResponse(call: Call<AnnouncementResponse>, response: Response<AnnouncementResponse>) {
