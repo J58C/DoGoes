@@ -2,6 +2,7 @@ package com.apps.dogoes
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -51,6 +52,9 @@ class AnnouncementsFragment : Fragment() {
     }
 
     private fun uploadAnnouncement() {
+        val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userId = sharedPreferences.getString("user_id", null)
+
         val title = etTitle.text.toString().trim()
         val content = etContent.text.toString().trim()
 
@@ -67,14 +71,14 @@ class AnnouncementsFragment : Fragment() {
             return
         }
 
-        val request = AnnouncementRequest(title, content)
+        val request = AnnouncementRequest(userId, title, content)
 
         ApiClient.instance.uploadAnnouncement(request).enqueue(object : Callback<AnnouncementResponse> {
             override fun onResponse(call: Call<AnnouncementResponse>, response: Response<AnnouncementResponse>) {
                 if (response.isSuccessful) {
                     val uploadedData = response.body()
                     if (uploadedData != null) {
-                        lastId = uploadedData._id
+                        lastId = uploadedData.ann
                         lastTitle = uploadedData.title
                         lastContent = uploadedData.content
 
