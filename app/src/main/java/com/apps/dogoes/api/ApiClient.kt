@@ -34,7 +34,7 @@ interface ApiService {
         @Body request: UpdateStatusRequest
     ): Call<UserResponse>
 
-    @PUT("api/clients/setpassword/{iduser}")
+    @PUT("password/{iduser}")
     fun changePassword(
         @Path("iduser") userId: String,
         @Body request: ChangePasswordRequest

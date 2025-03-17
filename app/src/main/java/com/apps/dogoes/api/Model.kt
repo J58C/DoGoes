@@ -26,10 +26,7 @@ data class AnnouncementRequest(
 )
 
 data class AnnouncementResponse(
-    val user_id: String,
-    val announcement_id: String,
-    val title: String,
-    val content: String
+    val _id: String
 )
 
 data class LoginRequest(

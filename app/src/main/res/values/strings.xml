@@ -22,4 +22,7 @@
     <string name="oldpw">Old Password</string>
     <string name="newpw">New Password</string>
     <string name="logout">Logout</string>
+    <string name="location">Location</string>
+    <string name="note">Note(Optional)</string>
+    <string name="status_description">Status</string>
 </resources>

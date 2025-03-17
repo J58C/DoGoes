@@ -21,7 +21,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Toast
 
 class AnnouncementsFragment : Fragment() {
 
@@ -55,7 +54,6 @@ class AnnouncementsFragment : Fragment() {
     private fun uploadAnnouncement() {
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
-        Toast.makeText(requireContext(), userId, Toast.LENGTH_SHORT).show()
 
         val title = etTitle.text.toString().trim()
         val content = etContent.text.toString().trim()
@@ -80,9 +78,9 @@ class AnnouncementsFragment : Fragment() {
                 if (response.isSuccessful) {
                     val uploadedData = response.body()
                     if (uploadedData != null) {
-                        lastId = uploadedData.announcement_id
-                        lastTitle = uploadedData.title
-                        lastContent = uploadedData.content
+                        lastId = uploadedData._id
+                        lastTitle = title
+                        lastContent = content
 
                         etTitle.text.clear()
                         etContent.text.clear()

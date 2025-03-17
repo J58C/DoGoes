@@ -49,22 +49,24 @@
                         android:id="@+id/txtHello"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorText"
-                        android:text="@string/hello"
-                        android:textSize="16sp"
+                        android:layout_marginStart="16dp"
                         android:fontFamily="@font/intertight_medium"
-                        android:layout_marginStart="16dp"/>
+                        android:text="@string/hello"
+                        android:textColor="@color/colorBackground"
+                        android:textSize="16sp"
+                        tools:ignore="TextContrastCheck" />
 
                     <TextView
                         android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorText"
-                        android:text="@string/user"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/roboto_bold"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="9dp" />
+                        android:layout_marginTop="9dp"
+                        android:fontFamily="@font/roboto_bold"
+                        android:text="@string/user"
+                        android:textColor="@color/colorBackground"
+                        android:textSize="18sp"
+                        tools:ignore="TextContrastCheck" />
 
                 </LinearLayout>
             </LinearLayout>
