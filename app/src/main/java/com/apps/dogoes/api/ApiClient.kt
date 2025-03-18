@@ -8,6 +8,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 
 object ApiClient {
     private const val BASE_URL = "https://sigmaskibidi.my.id/api/"
@@ -23,6 +24,11 @@ object ApiClient {
 }
 
 interface ApiService {
+    @GET("api/announcements/user/{userID}")
+    fun getUserAnnouncements(
+        @Path("userID") userId: String
+    ): Call<List<Announcement>>
+
     @POST("login")
     fun loginUser(
         @Body request: LoginRequest

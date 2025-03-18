@@ -29,6 +29,13 @@ data class AnnouncementResponse(
     val _id: String
 )
 
+data class Announcement(
+    val announcement_id: String,
+    val title: String,
+    val content: String,
+    val user_id: String
+)
+
 data class LoginRequest(
     val email: String,
     val password: String
