@@ -7,7 +7,18 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <Button
+        android:id="@+id/btnViewAnnouncements"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/history"
+        app:layout_constraintBottom_toTopOf="@id/cardViewAnnouncement"
+        app:layout_constraintEnd_toEndOf="@id/cardViewAnnouncement"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"/>
+
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewAnnouncement"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:cardElevation="8dp"

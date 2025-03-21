@@ -7,11 +7,9 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.DELETE
-import retrofit2.http.GET
 
 object ApiClient {
-    private const val BASE_URL = "https://sigmaskibidi.my.id/api/"
+    private const val BASE_URL = "https://sigmaskibidi.my.id/"
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
@@ -24,25 +22,20 @@ object ApiClient {
 }
 
 interface ApiService {
-    @GET("api/announcements/user/{userID}")
-    fun getUserAnnouncements(
-        @Path("userID") userId: String
-    ): Call<List<Announcement>>
-
     @POST("login")
     fun loginUser(
         @Body request: LoginRequest
     ): Call<UserResponse>
 
-    @PUT("clients/{id}")
+    @PUT("api/clients/update/{id}")
     fun updateUserStatus(
         @Path("id") userId: String,
         @Body request: UpdateStatusRequest
     ): Call<UserResponse>
 
-    @PUT("password/{iduser}")
+    @PUT("api/password/update/{id}")
     fun changePassword(
-        @Path("iduser") userId: String,
+        @Path("id") id: String,
         @Body request: ChangePasswordRequest
     ): Call<Void>
 
@@ -51,13 +44,20 @@ interface ApiService {
         @Body request: ResetPasswordRequest
     ): Call<Void>
 
-    @POST("announcements")
+    @POST("api/announcements/add")
     fun uploadAnnouncement(
-        @Body announcement: AnnouncementRequest
-    ): Call<AnnouncementResponse>
+        @Body announcement: AddAnnouncementRequest
+    ): Call<AddAnnouncementResponse>
 
-    @DELETE("announcements/{id}")
+    @POST("api/announcements/delete/{id}")
     fun deleteAnnouncement(
-        @Path("id") id: String
+        @Path("id") id: String,
+        @Body request: DeleteAnnouncementRequest
     ): Call<Void>
+
+    @POST("api/announcements/user/{id}")
+    fun getUserAnnouncements(
+        @Path("id") id: String,
+        @Body request: AnnouncementRequest
+    ): Call<List<AnnouncementResponse>>
 }

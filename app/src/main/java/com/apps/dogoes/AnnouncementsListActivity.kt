@@ -8,7 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apps.dogoes.api.ApiClient
-import com.apps.dogoes.api.Announcement
+import com.apps.dogoes.api.AnnouncementRequest
+import com.apps.dogoes.api.AnnouncementResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,7 +19,7 @@ class AnnouncementsListActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnLoadAnnouncements: Button
     private lateinit var adapter: AnnouncementsAdapter
-    private val announcements = mutableListOf<Announcement>()
+    private val announcements = mutableListOf<AnnouncementResponse>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,27 +40,31 @@ class AnnouncementsListActivity : AppCompatActivity() {
     private fun loadAnnouncements() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
-        if (userId == null) {
-            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
+        val userKey = sharedPreferences.getString("user_key", null)
+
+        if (userId.isNullOrEmpty() || userKey.isNullOrEmpty()) {
+            Toast.makeText(this, "User ID or Key not found", Toast.LENGTH_SHORT).show()
             return
         }
 
-        ApiClient.instance.getUserAnnouncements(userId).enqueue(object : Callback<List<Announcement>> {
+        val request = AnnouncementRequest(userKey)
+
+        ApiClient.instance.getUserAnnouncements(userId, request).enqueue(object : Callback<List<AnnouncementResponse>> {
             override fun onResponse(
-                call: Call<List<Announcement>>,
-                response: Response<List<Announcement>>
+                call: Call<List<AnnouncementResponse>>,
+                response: Response<List<AnnouncementResponse>>
             ) {
                 if (response.isSuccessful) {
-                    announcements.clear()
-                    response.body()?.let { announcements.addAll(it) }
-                    adapter.notifyDataSetChanged()
+                    response.body()?.let { responseList ->
+                        adapter.updateData(responseList)
+                    }
                 } else {
                     Log.e("Announcements", "Failed to fetch: ${response.errorBody()?.string()}")
                     Toast.makeText(this@AnnouncementsListActivity, "Failed to load announcements", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<List<Announcement>>, t: Throwable) {
+            override fun onFailure(call: Call<List<AnnouncementResponse>>, t: Throwable) {
                 Log.e("Announcements", "Error: ${t.message}")
                 Toast.makeText(this@AnnouncementsListActivity, "Network Error: ${t.message}", Toast.LENGTH_LONG).show()
             }

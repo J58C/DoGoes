@@ -82,7 +82,7 @@ class ProfileFragment : Fragment() {
         }
 
         btnLogout.setOnClickListener {
-            sharedPreferences.edit { clear() }
+            sharedPreferences.edit { clear().apply() }
             Toast.makeText(requireContext(), "Logged out!", Toast.LENGTH_SHORT).show()
             startActivity(Intent(requireContext(), LoginActivity::class.java))
             requireActivity().finish()
@@ -103,8 +103,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun changePassword(userId: String, oldPW: String, newPW: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val userKey = sharedPreferences.getString("user_key", null) ?: return
+
         val apiService = ApiClient.instance
-        val request = ChangePasswordRequest(oldPW, newPW)
+        val request = ChangePasswordRequest(oldPW, newPW, userKey)
 
         apiService.changePassword(userId, request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

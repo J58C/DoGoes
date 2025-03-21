@@ -254,7 +254,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful) {
                     val user = response.body()
-                    if (user?.role != null && user.role == "user") {
+                    if (user?.role != null && user.role in listOf("user", "admin", "superadmin")) {
                         saveUserData(user)
                         Log.d("LoginActivity", "Login successful, user_id: ${user._id}")
 
@@ -262,7 +262,7 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this@LoginActivity, "User access only!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, "UNNES access only!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, "Invalid email or password!", Toast.LENGTH_SHORT).show()
@@ -286,6 +286,7 @@ class LoginActivity : AppCompatActivity() {
         editor.putString("user_role", user.role)
         editor.putString("user_geotag", user.geotag)
         editor.putString("user_notes", user.notes)
+        editor.putString("user_key", user.token)
 
         if (editor.commit()) {
             Log.d("LoginActivity", "User data saved successfully")

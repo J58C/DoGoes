@@ -25,4 +25,6 @@
     <string name="location">Location</string>
     <string name="note">Note(Optional)</string>
     <string name="status_description">Status</string>
+    <string name="history">History</string>
+    <string name="load">Load Announcements</string>
 </resources>

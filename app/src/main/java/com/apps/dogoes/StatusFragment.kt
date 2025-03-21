@@ -13,9 +13,11 @@ import android.webkit.WebViewClient
 import android.widget.*
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.annotation.SuppressLint
 import android.view.animation.DecelerateInterpolator
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
@@ -38,6 +40,16 @@ class StatusFragment : Fragment() {
     private var lastLongitude: Double? = null
     private var isSlidDown = false
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Toast.makeText(requireContext(), "Permission granted", Toast.LENGTH_SHORT).show()
+                getLocation()
+            } else {
+                Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_LONG).show()
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,14 +57,16 @@ class StatusFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_status, container, false)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences = requireActivity()
+            .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
 
         if (userId == null) {
-            requireActivity().startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            startActivity(Intent(requireActivity(), LoginActivity::class.java))
             requireActivity().finish()
             return
         }
@@ -65,16 +79,27 @@ class StatusFragment : Fragment() {
         etNote = view.findViewById(R.id.etNote)
         autoCompleteTextView = view.findViewById(R.id.tvavailable)
 
-        webView.settings.javaScriptEnabled = true
+        with(webView.settings) {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            allowFileAccess = false
+            allowContentAccess = false
+        }
         WebView.setWebContentsDebuggingEnabled(false)
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                return false
+            }
+        }
         webView.loadUrl("file:///android_asset/leaflet_map.html")
 
         val listofStatus = arrayOf("Unavailable", "Available")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listofStatus)
-        autoCompleteTextView.setAdapter(adapter)
-        autoCompleteTextView.setOnClickListener { autoCompleteTextView.showDropDown() }
-        autoCompleteTextView.keyListener = null
+        autoCompleteTextView.setAdapter(
+            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listofStatus)
+        )
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
+            autoCompleteTextView.setText(listofStatus[position], false)
+        }
 
         val userStatus = sharedPreferences.getInt("user_status", 0)
         autoCompleteTextView.setText(if (userStatus == 1) "Available" else "Unavailable", false)
@@ -120,11 +145,11 @@ class StatusFragment : Fragment() {
     }
 
     private fun checkLocationPermission(): Boolean {
-        return if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+        return if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Toast.makeText(requireContext(), "Location permission is required", Toast.LENGTH_LONG).show()
             }
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             false
         } else {
             true
@@ -135,23 +160,27 @@ class StatusFragment : Fragment() {
         if (!checkLocationPermission()) return
 
         fusedLocationClient.lastLocation.addOnCompleteListener { task ->
-            val location = task.result
-            if (location != null) {
-                if (location.latitude != lastLatitude || location.longitude != lastLongitude) {
-                    lastLatitude = location.latitude
-                    lastLongitude = location.longitude
-                    webView.evaluateJavascript("updateLocation(${location.latitude}, ${location.longitude});", null)
-                }
-                if (!isSlidDown){
-                    slideIn(webView)
-                    slideIn(etNote) {
-                        etNote.post { etNote.invalidate(); etNote.requestLayout() }
+            if (task.isSuccessful) {
+                val location = task.result
+                if (location != null) {
+                    if (location.latitude != lastLatitude || location.longitude != lastLongitude) {
+                        lastLatitude = location.latitude
+                        lastLongitude = location.longitude
+                        webView.evaluateJavascript("updateLocation(${location.latitude}, ${location.longitude});", null)
                     }
-                    slideIn(btnSend)
-                    isSlidDown = true
+                    if (!isSlidDown) {
+                        slideIn(webView)
+                        slideIn(etNote) {
+                            etNote.post { etNote.invalidate(); etNote.requestLayout() }
+                        }
+                        slideIn(btnSend)
+                        isSlidDown = true
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Failed to Get Location", Toast.LENGTH_LONG).show()
                 }
             } else {
-                Toast.makeText(requireContext(), "Failed to Get Location", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Location request failed", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -161,8 +190,9 @@ class StatusFragment : Fragment() {
         val userId = sharedPreferences.getString("user_id", null) ?: return
         val status = if (autoCompleteTextView.text.toString() == "Available") 1 else 0
         val notes = etNote.text.toString()
+        val userKey = sharedPreferences.getString("user_key", null) ?: return
 
-        ApiClient.instance.updateUserStatus(userId, UpdateStatusRequest(status, "${lastLatitude},${lastLongitude}", notes))
+        ApiClient.instance.updateUserStatus(userId, UpdateStatusRequest(status, "${lastLatitude},${lastLongitude}", notes, userKey))
             .enqueue(object : Callback<UserResponse> {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                     if (response.isSuccessful) {

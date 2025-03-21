@@ -44,6 +44,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+        <!-- Activity Announcements List -->
+        <activity
+            android:name=".AnnouncementsListActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>
